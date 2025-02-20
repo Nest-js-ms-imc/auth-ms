@@ -1,14 +1,15 @@
 import { Controller, Body, Post } from '@nestjs/common';
-import { Presentation } from '../../presentation/presentation.interface';
+
+import { Application } from '../../application/application.interface';
 import { PasswordHashService } from '../services/password-hash.service';
 import { JwtService } from '../services/jwt.service';
-import { LoginUserDto, RegisterUserDto } from 'src/presentation/dto';
 import { UserService } from '../services/user.service';
+import { RegisterUserDto, LoginUserDto } from '../../domain/dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly presentation: Presentation,
+    private readonly application: Application,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly passwordHashService: PasswordHashService,
@@ -19,7 +20,7 @@ export class AuthController {
   @Post('register')
   async registerUser(@Body() registerUserDto: RegisterUserDto) {
     try {
-      const data = await this.presentation.newUser(
+      const data = await this.application.newUser(
         registerUserDto.name,
         registerUserDto.email,
         registerUserDto.password,
@@ -36,7 +37,7 @@ export class AuthController {
   @Post('login')
   async loginUser(@Body() loginUserDto: LoginUserDto) {
     try {
-      const data = await this.presentation.login(
+      const data = await this.application.login(
         loginUserDto.email,
         loginUserDto.password,
         this.jwtService,

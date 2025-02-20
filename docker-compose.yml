@@ -13,3 +13,16 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
     container_name: authdb
+
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    environment:
+      - SERVICES=secretsmanager,ssm
+      - DEFAULT_REGION=us-east-1
+      - EDGE_PORT=4566
+    ports:
+      - '4566:4566'
+      - '4571:4571'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'

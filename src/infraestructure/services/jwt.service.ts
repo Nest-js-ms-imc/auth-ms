@@ -2,25 +2,28 @@ import { Injectable } from '@nestjs/common';
 import { JwtService as JwTokenService } from '@nestjs/jwt';
 import { RpcException } from '@nestjs/microservices';
 
-import { envs } from 'src/config';
-import { UserPresentationDto } from 'src/presentation/dto';
-import { IJwtPresentationService } from 'src/presentation/service/jwt.service';
+import { UserApplicationDto } from '../../application/dto';
+import { IJwtApplicationService } from '../../application/service/jwt.service';
+import { EnvsService } from '../secrets/envs.service';
 
 @Injectable()
-export class JwtService implements IJwtPresentationService {
-  constructor(private readonly jwTokenService: JwTokenService) {}
+export class JwtService implements IJwtApplicationService {
+  constructor(
+    private readonly jwTokenService: JwTokenService,
+    private readonly envsService: EnvsService,
+  ) {}
 
-  generateToken(payload: Omit<UserPresentationDto, 'password'>): string {
+  generateToken(payload: Omit<UserApplicationDto, 'password'>): string {
     return this.jwTokenService.sign(payload);
   }
 
   verifyToken(token: string): {
-    user: Omit<UserPresentationDto, 'password'>;
+    user: Omit<UserApplicationDto, 'password'>;
     token: string;
   } {
     try {
-      const data: UserPresentationDto = this.jwTokenService.verify(token, {
-        secret: envs.jwtSecret,
+      const data: UserApplicationDto = this.jwTokenService.verify(token, {
+        secret: this.envsService.get('JWT_SECRET'),
       });
 
       const dataUser = { email: data.email, name: data.name, id: data.id };

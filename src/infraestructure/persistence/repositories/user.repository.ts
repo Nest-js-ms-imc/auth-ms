@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
 
-import { IUserRepository } from 'src/presentation/persistence/repositories/user.repository';
 import { UserModel } from '../models/user.model';
-import { UserPresentationDto } from 'src/presentation/dto';
-import { PasswordHashService } from 'src/infraestructure/services/password-hash.service';
+import { UserApplicationDto } from 'src/application/dto';
+import { PasswordHashService } from '../../services/password-hash.service';
+import { IUserRepository } from '../../../application/persistence/repositories/user.repository';
 
 @Injectable()
 export class UserRepository implements IUserRepository<UserModel> {
@@ -16,7 +16,7 @@ export class UserRepository implements IUserRepository<UserModel> {
     readonly passwordHashService: PasswordHashService,
   ) {}
 
-  async registerUser(user: UserPresentationDto): Promise<UserModel> {
+  async registerUser(user: UserApplicationDto): Promise<UserModel> {
     try {
       const data = this.mapUserApplicationDtoToUserModel(user);
 
@@ -39,7 +39,7 @@ export class UserRepository implements IUserRepository<UserModel> {
   }
 
   async loginUser(
-    user: Omit<UserPresentationDto, 'id' | 'name'>,
+    user: Omit<UserApplicationDto, 'id' | 'name'>,
   ): Promise<{ user: Omit<UserModel, 'password'>; token: string }> {
     const { email, password } = user;
 
@@ -100,7 +100,7 @@ export class UserRepository implements IUserRepository<UserModel> {
   }
 
   private mapUserApplicationDtoToUserModel(
-    data: UserPresentationDto,
+    data: UserApplicationDto,
   ): UserModel {
     const user = new UserModel();
     user.id = data.id;

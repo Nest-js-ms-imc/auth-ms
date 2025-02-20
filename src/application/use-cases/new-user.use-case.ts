@@ -1,10 +1,10 @@
 import { Domain } from 'src/domain/domain.interface';
-import { CreateUserDomainDto } from 'src/domain/dto/create-user.dto';
+import { CreateUserDomainDto } from '../../domain/dto/create-user.dto';
 import { IPasswordHashDomainService } from 'src/domain/services/password-hash.service';
-import { UserPresentationDto } from '../dto/user.dto';
+import { UserApplicationDto } from '../dto/user.dto';
 import { IUserModel } from '../persistence/models/user.model';
 import { IUserRepository } from '../persistence/repositories/user.repository';
-import { NewUserPresentationDto } from '../dto';
+import { NewUserApplicationDto } from '../dto';
 
 export class NewUserUseCase {
   constructor(
@@ -15,8 +15,8 @@ export class NewUserUseCase {
   ) {}
 
   async execute(
-    newUserDto: NewUserPresentationDto,
-  ): Promise<UserPresentationDto> {
+    newUserDto: NewUserApplicationDto,
+  ): Promise<UserApplicationDto> {
     const newUser = this.mapUserDtoToDomain(newUserDto);
 
     const data = this.domainController.createUser(
@@ -29,12 +29,12 @@ export class NewUserUseCase {
 
     const userDto = await this.userRepository.registerUser(user);
 
-    const answer = this.mapUserDtoToPresentation(userDto);
+    const answer = this.mapUserDtoToApplication(userDto);
     return answer;
   }
 
   private mapUserDtoToDomain(
-    userDto: NewUserPresentationDto,
+    userDto: NewUserApplicationDto,
   ): CreateUserDomainDto {
     const user = new CreateUserDomainDto();
     user.email = userDto.email;
@@ -44,9 +44,9 @@ export class NewUserUseCase {
   }
 
   private mapUserDtoToPersistence(
-    userDto: UserPresentationDto,
-  ): UserPresentationDto {
-    const user = new UserPresentationDto();
+    userDto: UserApplicationDto,
+  ): UserApplicationDto {
+    const user = new UserApplicationDto();
     user.id = userDto.id;
     user.email = userDto.email;
     user.name = userDto.name;
@@ -54,8 +54,8 @@ export class NewUserUseCase {
     return user;
   }
 
-  private mapUserDtoToPresentation(userDto: IUserModel): UserPresentationDto {
-    const user = new UserPresentationDto();
+  private mapUserDtoToApplication(userDto: IUserModel): UserApplicationDto {
+    const user = new UserApplicationDto();
     user.id = userDto.id;
     user.email = userDto.email;
     user.name = userDto.name;

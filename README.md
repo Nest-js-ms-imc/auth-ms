@@ -6,13 +6,22 @@
 
 1. Copiar el repositorio
 2. Instalar dependencias
+
 ```
 npm run install
 ```
-3. 
+
+3.
 
 ## Auth API
 
 ```
 docker compose up -d
 ```
+
+AWS Secrets Connection
+
+Access Key Id: test
+Secret Access Key: test
+Region: us-east-1
+Format: json

@@ -5,21 +5,30 @@ import { PersistenceModule } from './persistence/persistence.module';
 import { JwtService } from './services/jwt.service';
 import { PasswordHashService } from './services/password-hash.service';
 import { UserService } from './services/user.service';
-import { Presentation } from 'src/presentation/presentation.interface';
+import { Application } from '../application/application.interface';
 import { UserRepository } from './persistence/repositories/user.repository';
-import { PresentationController } from 'src/presentation/presentation.controller';
-import { DomainController } from 'src/domain/domain.controller';
-import { Domain } from 'src/domain/domain.interface';
+import { ApplicationController } from '../application/application.controller';
+import { DomainController } from '../domain/domain.controller';
+import { Domain } from '../domain/domain.interface';
 import { AuthController } from './controllers/security.controller';
-import { envs } from 'src/config';
+import { SecretsModule } from './secrets/aws-secrets.module';
+import { EnvsService } from './secrets/envs.service';
 
 @Module({
   imports: [
+    SecretsModule,
     PersistenceModule,
-    JwtModule.register({
+    JwtModule.registerAsync({
+      inject: [EnvsService],
       global: true,
-      secret: envs.jwtSecret,
-      signOptions: { expiresIn: '2h' },
+      useFactory: (envsService: EnvsService) => {
+        // console.log('🚀 EnvsService dentro de JwtModule:', envsService);
+
+        return {
+          secret: envsService.get('JWT_SECRET'),
+          signOptions: { expiresIn: '2h' },
+        };
+      },
     }),
   ],
   controllers: [AuthController],
@@ -32,10 +41,10 @@ import { envs } from 'src/config';
       useClass: DomainController,
     },
     {
-      provide: Presentation,
+      provide: Application,
       inject: [UserRepository, Domain],
       useFactory: (userRepository: UserRepository, domainController: Domain) =>
-        new PresentationController(userRepository, domainController),
+        new ApplicationController(userRepository, domainController),
     },
   ],
 })

@@ -1,20 +1,20 @@
 import { PasswordHashService } from 'src/infraestructure/services/password-hash.service';
-import { UserPresentationDto } from './dto';
-import { IJwtPresentationService } from './service/jwt.service';
+import { UserApplicationDto } from './dto';
+import { IJwtApplicationService } from './service/jwt.service';
 import { IUserDomainService } from 'src/domain/services/user.service';
 
-export abstract class Presentation {
+export abstract class Application {
   abstract newUser(
     name: string,
     email: string,
     password: string,
     passwordHashService: PasswordHashService,
-  ): Promise<UserPresentationDto>;
+  ): Promise<UserApplicationDto>;
 
   abstract login(
     email: string,
     password: string,
-    jwtService: IJwtPresentationService,
+    jwtService: IJwtApplicationService,
     userService: IUserDomainService,
     passwordHashService: PasswordHashService,
   );

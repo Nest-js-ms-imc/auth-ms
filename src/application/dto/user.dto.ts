@@ -1,4 +1,4 @@
-export class UserPresentationDto {
+export class UserApplicationDto {
   id: string;
   name: string;
   email: string;

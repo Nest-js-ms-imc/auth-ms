@@ -1,6 +1,5 @@
-import { CreateUserDomainDto } from './dto/create-user.dto';
 import { PasswordHashService } from '../infraestructure/services/password-hash.service';
-import { UserDomainDto } from './dto/user.dto';
+import { CreateUserDomainDto, UserDomainDto } from './dto';
 import { IUserDomainService } from './services/user.service';
 
 export abstract class Domain {

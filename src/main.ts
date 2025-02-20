@@ -2,8 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
-import { envs } from './config';
 import { InfraestructureModule } from './infraestructure/infraestructure.module';
+import { EnvsService } from './infraestructure/secrets/envs.service';
 
 async function bootstrap() {
   const logger = new Logger('auth-ms');
@@ -19,6 +19,8 @@ async function bootstrap() {
   //   },
   // );
 
+  const envsService = app.get(EnvsService);
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -26,9 +28,9 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(envsService.get('PORT'));
   // await app.listen();
 
-  logger.log(`Auth Microservice running on port ${envs.port}`);
+  logger.log(`Auth Microservice running on port ${envsService.get('PORT')}`);
 }
 void bootstrap();
