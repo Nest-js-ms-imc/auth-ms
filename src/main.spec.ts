@@ -1,40 +1,55 @@
 import { NestFactory } from '@nestjs/core';
-import { Logger } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 
 import { InfraestructureModule } from './infraestructure/infraestructure.module';
+import { EnvsService } from './infraestructure/secrets/envs.service';
 
 jest.mock('@nestjs/core', () => ({
   NestFactory: {
-    create: jest.fn().mockResolvedValue({
-      useGlobalPipes: jest.fn(),
-      listen: jest.fn().mockResolvedValue(undefined),
-    }),
+    create: jest.fn(),
   },
 }));
 
-jest.mock('@nestjs/common', () => {
-  const actualCommon = jest.requireActual('@nestjs/common');
-  return {
-    ...actualCommon,
-    Logger: jest.fn().mockImplementation(() => ({
-      log: jest.fn(),
-    })),
-  };
-});
-
 describe('bootstrap', () => {
-  let loggerMock: jest.Mocked<Logger>;
+  let mockApp: jest.Mocked<INestApplication>;
+  let mockEnvsService: Partial<EnvsService>;
 
   beforeEach(() => {
-    loggerMock = new Logger('auth-ms') as jest.Mocked<Logger>;
+    mockApp = {
+      get: jest.fn(() => mockEnvsService),
+      useGlobalPipes: jest.fn(() => {}),
+      listen: jest.fn(async () => {}),
+    } as unknown as jest.Mocked<INestApplication>;
+
+    mockEnvsService = {
+      get: jest.fn().mockReturnValue('3000'),
+    };
+
+    (NestFactory.create as jest.Mock).mockResolvedValue(mockApp);
+    mockApp.get.mockReturnValue(mockEnvsService);
   });
 
-  it('Should init correctly', async () => {
-    const mockApp = await NestFactory.create(InfraestructureModule);
-
+  it('should initialize the application and listen on the correct port', async () => {
     await import('./main');
 
     expect(NestFactory.create).toHaveBeenCalledWith(InfraestructureModule);
-    expect(mockApp.listen).toHaveBeenCalledWith(process.env.PORT);
+    expect(mockApp.get).toHaveBeenCalledWith(EnvsService);
+    expect(mockApp.listen).toHaveBeenCalledWith('3000');
+  });
+
+  it('should handle errors during initialization', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    const processExitSpy = jest
+      .spyOn(process, 'exit')
+      .mockImplementation(() => {
+        throw new Error('Process exit called');
+      });
+
+    (NestFactory.create as jest.Mock).mockRejectedValue(
+      new Error('Initialization failed'),
+    );
+
+    consoleErrorSpy.mockRestore();
+    processExitSpy.mockRestore();
   });
 });

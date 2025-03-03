@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { RpcException } from '@nestjs/microservices';
 
 import { UserModel } from '../models/user.model';
 import { UserApplicationDto } from 'src/application/dto';

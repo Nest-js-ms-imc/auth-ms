@@ -25,9 +25,9 @@ describe('DomainController', () => {
   });
 
   describe('createUser', () => {
-    it('debería crear un usuario válido', () => {
+    it('Should create user', () => {
       const mockData: CreateUserDomainDto = {
-        name: '',
+        name: 'Juan Test',
         email: 'test@example.com',
         password: '123456',
       };
@@ -48,11 +48,11 @@ describe('DomainController', () => {
       expect(mockUser.create).toHaveBeenCalledWith(mockData);
     });
 
-    it('debería lanzar InvalidDataException si el usuario no es válido', () => {
+    it('Should launch InvalidDataException', () => {
       const mockData: CreateUserDomainDto = {
-        name: '',
-        email: '',
-        password: '',
+        name: 'Juan test',
+        email: 'test@example',
+        password: '123',
       };
 
       const mockUser = {
@@ -65,28 +65,14 @@ describe('DomainController', () => {
 
       (UserEntity as jest.Mock).mockImplementation(() => mockUser);
 
-      const result = controller.signIn(
-        mockData.email,
-        mockData.password,
-        mockUserService,
-        mockPasswordHashService,
-      );
-
-      expect(result).toEqual({ email: mockData.email });
-
       expect(() => {
-        controller.signIn(
-          mockData.email,
-          mockData.password,
-          mockUserService,
-          mockPasswordHashService,
-        );
+        controller.createUser(mockData, mockPasswordHashService);
       }).toThrow(InvalidDataException);
     });
   });
 
   describe('signIn', () => {
-    it('debería autenticar un usuario válido', async () => {
+    it('Should signIn', async () => {
       const mockEmail = 'test@example.com';
       const mockPassword = '123456';
 
@@ -117,7 +103,7 @@ describe('DomainController', () => {
       expect(mockUser.signIn).toHaveBeenCalledWith(mockUserService);
     });
 
-    it('debería lanzar InvalidDataException si el usuario no es válido', async () => {
+    it('Should launch InvalidDataException', async () => {
       const mockEmail = '';
       const mockPassword = '';
 
@@ -131,14 +117,14 @@ describe('DomainController', () => {
 
       (UserEntity as jest.Mock).mockImplementation(() => mockUser);
 
-      await expect(
-        controller.signIn(
+      await expect(async () => {
+        await controller.signIn(
           mockEmail,
           mockPassword,
           mockUserService,
           mockPasswordHashService,
-        ),
-      ).rejects.toThrow(InvalidDataException);
+        );
+      }).rejects.toThrow(InvalidDataException);
     });
   });
 });

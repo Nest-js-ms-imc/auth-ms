@@ -10,17 +10,17 @@ import { CreateUserDomainDto, UserDomainDto } from './dto';
 export class DomainController extends Domain {
   createUser(
     data: CreateUserDomainDto,
-    // uuidService: IUuidDomainService,
     passwordHashService: IPasswordHashDomainService,
   ): UserDomainDto {
     const user = new UserEntity(passwordHashService, data);
     user.validate();
-    console.log(user.isValid());
+
     if (!user.isValid()) {
       throw new InvalidDataException('Invalid user data', user.getErrors());
     }
     return user.create(data);
   }
+
   signIn(
     email: string,
     password: string,
@@ -29,7 +29,7 @@ export class DomainController extends Domain {
   ): Promise<{ user: Omit<UserModel, 'password'>; token: string }> {
     const user = new UserEntity(passwordHashService, { email, password });
     user.validate();
-    console.log(user.isValid());
+
     if (!user.isValid()) {
       throw new InvalidDataException('Invalid user data', user.getErrors());
     }

@@ -10,9 +10,9 @@ import { EnvsService } from './envs.service';
 })
 export class SecretsModule {
   constructor(private readonly envsService: EnvsService) {
-    console.log(
-      '✅ EnvsService ha sido inyectado en SecretsModule:',
-      envsService,
-    );
+    // console.log(
+    //   '✅ EnvsService ha sido inyectado en SecretsModule:',
+    //   envsService,
+    // );
   }
 }

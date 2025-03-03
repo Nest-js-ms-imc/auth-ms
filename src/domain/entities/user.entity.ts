@@ -42,7 +42,7 @@ export class UserEntity {
   }
 
   public validate(): this {
-    if (this.name && this.validateName() === false) {
+    if (!this.name) {
       this._errors.set('name', false);
     }
 
@@ -63,13 +63,6 @@ export class UserEntity {
 
   public getErrors(): Map<string, boolean> {
     return this._errors;
-  }
-
-  private validateName(): boolean {
-    if (this.name && this.name.length > 0) {
-      return true;
-    }
-    return false;
   }
 
   private validateEmail(): boolean {
