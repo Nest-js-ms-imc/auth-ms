@@ -1,6 +1,4 @@
-import {
-  JwtModule,
-} from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -163,23 +161,4 @@ describe('InfraestructureModule', () => {
       signOptions: { expiresIn: '2h' },
     });
   });
-
-  // it('should call EnvsService.get with JWT_SECRET', async () => {
-  //   // Extraemos la configuración de JwtModule
-  //   const jwtModuleAsync = InfraestructureModule['imports'].find(
-  //     (importedModule) => 'useFactory' in importedModule,
-  //   );
-
-  //   expect(jwtModuleAsync).toBeDefined(); // Verifica que encontramos el módulo
-
-  //   // Ejecutamos useFactory manualmente
-  //   const jwtOptions = (await jwtModuleAsync.useFactory(
-  //     envsServiceMock,
-  //   )) as JwtModuleOptions;
-
-  //   // Verificamos que se haya llamado correctamente
-  //   expect(envsServiceMock.get).toHaveBeenCalledWith('JWT_SECRET');
-  //   expect(jwtOptions.secret).toBe('mocked_secret');
-  //   expect(jwtOptions.signOptions?.expiresIn).toBe('2h');
-  // });
 });

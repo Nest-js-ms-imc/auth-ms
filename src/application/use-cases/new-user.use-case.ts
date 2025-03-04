@@ -10,7 +10,6 @@ export class NewUserUseCase {
   constructor(
     private readonly userRepository: IUserRepository<IUserModel>,
     private readonly domainController: Domain,
-    // private readonly uuidService: IUuidDomainService,
     private readonly passwordHashService: IPasswordHashDomainService,
   ) {}
 
@@ -21,7 +20,6 @@ export class NewUserUseCase {
 
     const data = this.domainController.createUser(
       newUser,
-      // this.uuidService,
       this.passwordHashService,
     );
 

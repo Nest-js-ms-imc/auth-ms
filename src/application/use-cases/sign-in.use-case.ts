@@ -1,5 +1,5 @@
 import { Domain } from 'src/domain/domain.interface';
-import { IPasswordHashDomainService } from '../..//domain/services/password-hash.service';
+import { IPasswordHashDomainService } from '../../domain/services/password-hash.service';
 import { IUserDomainService } from 'src/domain/services/user.service';
 import { UseCaseException } from '../exceptions/use-case.exception';
 import { IUserModel } from '../persistence/models/user.model';

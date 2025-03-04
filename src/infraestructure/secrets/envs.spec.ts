@@ -1,6 +1,6 @@
 import * as joi from 'joi';
 
-jest.mock('dotenv/config'); // Mockea dotenv para evitar cambios en env reales
+jest.mock('dotenv/config');
 
 describe('Environment Variables Validation', () => {
   let originalEnv: NodeJS.ProcessEnv;
@@ -21,18 +21,6 @@ describe('Environment Variables Validation', () => {
   afterEach(() => {
     process.env = originalEnv;
   });
-
-  // it('debería validar y cargar correctamente las variables de entorno', () => {
-  //   expect(envs).toEqual({
-  //     port: 3000,
-  //     jwtSecret: 'Jw7S3cr3tN357',
-  //     dbHost: 'localhost',
-  //     dbName: 'AuthDB',
-  //     dbUsername: 'postgres',
-  //     dbPassword: 'M1S3Cr37P4s5w0rd',
-  //     dbPort: 5432,
-  //   });
-  // });
 
   it('debería lanzar un error si falta una variable de entorno', () => {
     delete process.env.PORT;
