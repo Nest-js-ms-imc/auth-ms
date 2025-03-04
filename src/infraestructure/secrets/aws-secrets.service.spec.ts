@@ -57,7 +57,7 @@ describe('AwsSecretsService', () => {
 
     const secret = await awsSecretsService.getSecret('test-secret');
 
-    expect(secret).toBe('EROR');
+    expect(secret).toBe('ERROR');
     expect(loggerSpy).toHaveBeenCalledWith(
       expect.stringContaining('Failed to retrieve secret "test-secret":'),
       expect.any(Error),

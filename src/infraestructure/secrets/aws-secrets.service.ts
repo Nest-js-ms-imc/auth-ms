@@ -38,7 +38,7 @@ export class AwsSecretsService implements SecretsService, OnModuleInit {
       return response.SecretString!;
     } catch (error) {
       this.logger.error(`Failed to retrieve secret "${secretName}":`, error);
-      return 'EROR';
+      return 'ERROR';
     }
   }
 
