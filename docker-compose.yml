@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   db:
     image: postgres:16.2
@@ -20,7 +18,6 @@ services:
     environment:
       - SERVICES=secretsmanager,ssm
       - DEFAULT_REGION=us-east-1
-      - EDGE_PORT=4566
     ports:
       - '4566:4566'
       - '4571:4571'
