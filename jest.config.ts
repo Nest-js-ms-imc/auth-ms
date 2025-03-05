@@ -1,4 +1,6 @@
-export default {
+import { Config } from 'jest';
+
+const config: Config = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
@@ -12,5 +14,13 @@ export default {
   },
   collectCoverageFrom: ['src/**/*.(t|j)s'],
   coverageDirectory: './coverage',
-  testTimeout: 30000, // Aumenta el tiempo si tienes pruebas lentas
+  testTimeout: 30000,
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '\\.d\\.ts$',
+    '\\.module\\.ts$',
+  ],
 };
+
+export default config;

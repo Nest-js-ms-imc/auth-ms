@@ -107,6 +107,7 @@ export class UserRepository implements IUserRepository<UserModel> {
     user.name = data.name;
     user.email = data.email;
     user.password = data.password;
+    user.createdAt = new Date();
     return user;
   }
 }

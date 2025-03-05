@@ -21,9 +21,7 @@ export class UserModel implements IUserModel {
   @Column('bool', { default: true })
   isActive: boolean;
 
-  @Column('date', {
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @Column('date')
   createdAt: Date;
 
   @Column('date', { nullable: true })
