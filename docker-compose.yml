@@ -8,8 +8,8 @@ services:
       - 5432:5432
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=M1S3Cr37P4s5w0rd
+      - POSTGRES_DB=AuthDB
     container_name: authdb
 
   localstack:

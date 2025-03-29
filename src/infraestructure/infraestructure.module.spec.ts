@@ -7,7 +7,7 @@ import { JwtService } from './services/jwt.service';
 import { PasswordHashService } from './services/password-hash.service';
 import { UserService } from './services/user.service';
 import { UserRepository } from './persistence/repositories/user.repository';
-import { AuthController } from './controllers/security.controller';
+import { AuthController } from './controllers/auth.controller';
 import { EnvsService } from './secrets/envs.service';
 import { SecretsModule } from './secrets/aws-secrets.module';
 import { ApplicationController } from '../application/application.controller';

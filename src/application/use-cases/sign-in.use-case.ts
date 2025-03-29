@@ -32,14 +32,20 @@ export class SignInUseCase {
       const token = new TokenApplicationDto();
       const data = await this.userRepository.findByEmail(signInDto.email);
       if (!data) {
-        throw new UseCaseException('Invalid email or password');
+        throw new UseCaseException(
+          'Invalid email or password',
+          new Map<string, boolean>(),
+        );
       }
       const { email, id, name } = this.mapUserModelToUserDto(data);
       token.token = this.generateToken({ email, id, name });
       return token;
     }
 
-    throw new UseCaseException('Invalid email or password');
+    throw new UseCaseException(
+      'Invalid email or password',
+      new Map<string, boolean>(),
+    );
   }
 
   private generateToken(data: Omit<UserApplicationDto, 'password'>): string {

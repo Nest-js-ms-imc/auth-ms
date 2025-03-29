@@ -18,4 +18,9 @@ export abstract class Application {
     userService: IUserDomainService,
     passwordHashService: PasswordHashService,
   );
+
+  abstract verifyToken(
+    token: string,
+    jwtService: IJwtApplicationService,
+  ): Promise<Omit<UserApplicationDto, 'password'>>;
 }

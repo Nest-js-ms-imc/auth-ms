@@ -1,10 +1,14 @@
-import { Controller, Body, Post } from '@nestjs/common';
+import { Controller, Body, Post, Get } from '@nestjs/common';
 
 import { Application } from '../../application/application.interface';
 import { PasswordHashService } from '../services/password-hash.service';
 import { JwtService } from '../services/jwt.service';
 import { UserService } from '../services/user.service';
-import { RegisterUserDto, LoginUserDto } from '../../domain/dto';
+import {
+  RegisterUserDto,
+  LoginUserDto,
+  VerifyTokenDto,
+} from '../../domain/dto';
 
 @Controller('auth')
 export class AuthController {
@@ -43,6 +47,21 @@ export class AuthController {
         this.jwtService,
         this.userService,
         this.passwordHashService,
+      );
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // @MessagePattern('auth.verify.user')
+  // verifyToken(@Payload() token: string) {
+  @Get('verifyToken')
+  async verifyToken(@Body() verifyTokenDto: VerifyTokenDto) {
+    try {
+      const data = await this.application.verifyToken(
+        verifyTokenDto.token,
+        this.jwtService,
       );
       return data;
     } catch (error) {

@@ -10,7 +10,7 @@ import { UserRepository } from './persistence/repositories/user.repository';
 import { ApplicationController } from '../application/application.controller';
 import { DomainController } from '../domain/domain.controller';
 import { Domain } from '../domain/domain.interface';
-import { AuthController } from './controllers/security.controller';
+import { AuthController } from './controllers/auth.controller';
 import { SecretsModule } from './secrets/aws-secrets.module';
 import { EnvsService } from './secrets/envs.service';
 
@@ -19,10 +19,17 @@ import { EnvsService } from './secrets/envs.service';
     SecretsModule,
     PersistenceModule,
     JwtModule.registerAsync({
+      imports: [SecretsModule],
       inject: [EnvsService],
       global: true,
-      useFactory: (envsService: EnvsService) => {
-        // console.log('🚀 EnvsService dentro de JwtModule:', envsService);
+      useFactory: async (envsService: EnvsService) => {
+        await envsService.loadSecrets();
+
+        // console.log(
+        //   '🚀 EnvsService dentro de JwtModule:',
+        //   envsService,
+        //   envsService.get('JWT_SECRET'),
+        // );
 
         return {
           secret: envsService.get('JWT_SECRET'),

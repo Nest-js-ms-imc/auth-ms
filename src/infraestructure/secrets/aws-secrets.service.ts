@@ -43,8 +43,8 @@ export class AwsSecretsService implements SecretsService, OnModuleInit {
   }
 
   async onModuleInit() {
-    // await this.getSecret('auth-secrets');
-    const secrets = await this.getSecret('auth-secrets');
-    console.log('secrets loaded: ', secrets);
+    await this.getSecret('auth-secrets');
+    // const secrets = await this.getSecret('auth-secrets');
+    // console.log('secrets loaded: ', secrets);
   }
 }

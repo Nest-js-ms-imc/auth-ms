@@ -8,6 +8,7 @@ import { IUserRepository } from './persistence/repositories/user.repository';
 import { NewUserUseCase } from './use-cases/new-user.use-case';
 import { SignInUseCase } from './use-cases/sign-in.use-case';
 import { IJwtApplicationService } from './service/jwt.service';
+import { VerifyTokenUseCase } from './use-cases/verify-token.use-case';
 
 export class ApplicationController extends Application {
   constructor(
@@ -47,5 +48,24 @@ export class ApplicationController extends Application {
     );
     const data = await useCase.execute({ email, password });
     return data.token;
+  }
+
+  async verifyToken(
+    token: string,
+    jwtService: IJwtApplicationService,
+  ): Promise<{
+    id: string;
+    name: string;
+    email: string;
+    token: string;
+  }> {
+    const useCase = new VerifyTokenUseCase(jwtService);
+    const data = await useCase.execute({ token });
+    return {
+      id: data.user.id,
+      name: data.user.name,
+      email: data.user.email,
+      token: data.token,
+    };
   }
 }

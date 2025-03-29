@@ -29,6 +29,7 @@ describe('SignInUseCase', () => {
     mockDomainController = {
       createUser: jest.fn(),
       signIn: jest.fn(),
+      verifyToken: jest.fn(),
     } as jest.Mocked<Domain>;
 
     mockJwtService = {

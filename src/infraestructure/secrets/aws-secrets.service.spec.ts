@@ -99,7 +99,7 @@ describe('AwsSecretsService', () => {
       },
     };
 
-    (clientMock.send as any).mockResolvedValue(mockSecret);
+    (clientMock.send as jest.Mock).mockResolvedValue(mockSecret);
 
     const secret = await awsSecretsService.getSecret('test-secret');
 

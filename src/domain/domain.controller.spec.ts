@@ -110,9 +110,7 @@ describe('DomainController', () => {
       const mockUser = {
         validate: jest.fn(),
         isValid: jest.fn().mockReturnValue(false),
-        getErrors: jest
-          .fn()
-          .mockReturnValue(['Invalid email', 'Invalid password']),
+        getErrors: jest.fn().mockReturnValue(['email', 'Invalid email']),
       };
 
       (UserEntity as jest.Mock).mockImplementation(() => mockUser);

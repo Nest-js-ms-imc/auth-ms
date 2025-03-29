@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthController } from './security.controller';
+import { AuthController } from './auth.controller';
 import { Application } from '../../application/application.interface';
 import { PasswordHashService } from '../services/password-hash.service';
 import { JwtService } from '../services/jwt.service';

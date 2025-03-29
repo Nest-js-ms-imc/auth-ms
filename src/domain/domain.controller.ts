@@ -27,7 +27,11 @@ export class DomainController extends Domain {
     userService: IUserDomainService,
     passwordHashService: IPasswordHashDomainService,
   ): Promise<{ user: Omit<UserModel, 'password'>; token: string }> {
-    const user = new UserEntity(passwordHashService, { email, password });
+    const user = new UserEntity(passwordHashService, {
+      email,
+      password,
+      name: 'login',
+    });
     user.validate();
 
     if (!user.isValid()) {

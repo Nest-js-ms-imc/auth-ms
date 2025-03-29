@@ -1,8 +1,15 @@
-export class InvalidDataException extends Error {
-  errors: Map<string, boolean>;
+import { HttpException, HttpStatus } from '@nestjs/common';
+
+export class InvalidDataException extends HttpException {
   constructor(message: string, errors: Map<string, boolean>) {
-    super(message);
-    this.errors = errors;
-    this.name = 'InvalidDataException';
+    super(
+      {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message,
+        errors: Object.fromEntries(errors),
+        name: 'InvalidDataException',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }
