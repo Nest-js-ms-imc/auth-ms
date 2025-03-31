@@ -8,6 +8,7 @@ import {
   RegisterUserDto,
   LoginUserDto,
   VerifyTokenDto,
+  LogOutUserDto,
 } from '../../domain/dto';
 
 @Controller('auth')
@@ -64,6 +65,16 @@ export class AuthController {
         this.jwtService,
       );
       return data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  @Post('logout')
+  async logout(@Body() logOutUserDto: LogOutUserDto) {
+    try {
+      await this.application.logOut(logOutUserDto.token);
+      return { message: 'Logged out successfully' };
     } catch (error) {
       console.error(error);
     }

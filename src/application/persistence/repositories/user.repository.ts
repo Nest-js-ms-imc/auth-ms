@@ -8,4 +8,5 @@ export interface IUserRepository<User extends IUserModel> {
   ): Promise<{ user: Omit<User, 'password'>; token: string }>;
   findByEmail(email: string): Promise<User | null>;
   deleteUser(email: string): Promise<User>;
+  logout(token: string): Promise<boolean>;
 }

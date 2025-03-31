@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 
 import { UserModel } from '../models/user.model';
 import { UserApplicationDto } from 'src/application/dto';
-import { PasswordHashService } from '../../services/password-hash.service';
 import { IUserRepository } from '../../../application/persistence/repositories/user.repository';
+import { PasswordHashService, RedisService } from '@/infraestructure/services';
 
 @Injectable()
 export class UserRepository implements IUserRepository<UserModel> {
@@ -14,6 +14,7 @@ export class UserRepository implements IUserRepository<UserModel> {
     @InjectRepository(UserModel)
     readonly repository: Repository<UserModel>,
     readonly passwordHashService: PasswordHashService,
+    readonly redisService: RedisService,
   ) {}
 
   async registerUser(user: UserApplicationDto): Promise<UserModel> {
@@ -109,5 +110,15 @@ export class UserRepository implements IUserRepository<UserModel> {
     user.password = data.password;
     user.createdAt = new Date();
     return user;
+  }
+
+  async logout(token: string): Promise<boolean> {
+    const expirationTime = 3600;
+    await this.redisService.set(
+      `blacklist:${token}`,
+      'revoked',
+      expirationTime,
+    );
+    return true;
   }
 }

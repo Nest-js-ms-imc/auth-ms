@@ -23,4 +23,6 @@ export abstract class Application {
     token: string,
     jwtService: IJwtApplicationService,
   ): Promise<Omit<UserApplicationDto, 'password'>>;
+
+  abstract logOut(token: string): Promise<boolean>;
 }

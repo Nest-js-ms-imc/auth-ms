@@ -2,17 +2,19 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
 import { PersistenceModule } from './persistence/persistence.module';
-import { JwtService } from './services/jwt.service';
-import { PasswordHashService } from './services/password-hash.service';
-import { UserService } from './services/user.service';
 import { Application } from '../application/application.interface';
 import { UserRepository } from './persistence/repositories/user.repository';
 import { ApplicationController } from '../application/application.controller';
 import { DomainController } from '../domain/domain.controller';
 import { Domain } from '../domain/domain.interface';
 import { AuthController } from './controllers/auth.controller';
-import { SecretsModule } from './secrets/aws-secrets.module';
-import { EnvsService } from './secrets/envs.service';
+import { EnvsService, SecretsModule } from './secrets';
+import {
+  JwtService,
+  PasswordHashService,
+  RedisService,
+  UserService,
+} from './services';
 
 @Module({
   imports: [
@@ -43,6 +45,7 @@ import { EnvsService } from './secrets/envs.service';
     JwtService,
     PasswordHashService,
     UserService,
+    RedisService,
     {
       provide: Domain,
       useClass: DomainController,
@@ -53,6 +56,13 @@ import { EnvsService } from './secrets/envs.service';
       useFactory: (userRepository: UserRepository, domainController: Domain) =>
         new ApplicationController(userRepository, domainController),
     },
+    {
+      provide: UserService,
+      inject: [UserRepository],
+      useFactory: (userRepository: UserRepository) =>
+        new UserService(userRepository),
+    },
   ],
+  exports: [UserService],
 })
 export class InfraestructureModule {}

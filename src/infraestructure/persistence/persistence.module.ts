@@ -3,9 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserModel } from './models/user.model';
 import { UserRepository } from './repositories/user.repository';
-import { PasswordHashService } from '../services/password-hash.service';
-import { EnvsService } from '../secrets/envs.service';
-import { SecretsModule } from '../secrets/aws-secrets.module';
+import { EnvsService, SecretsModule } from '../secrets';
+import { PasswordHashService, RedisService } from '../services';
 
 @Module({
   imports: [
@@ -43,7 +42,7 @@ import { SecretsModule } from '../secrets/aws-secrets.module';
     TypeOrmModule.forFeature([UserModel]),
   ],
   controllers: [],
-  providers: [UserRepository, PasswordHashService],
+  providers: [UserRepository, PasswordHashService, RedisService],
   exports: [UserRepository],
 })
 export class PersistenceModule {}

@@ -1,14 +1,19 @@
 import { Domain } from 'src/domain/domain.interface';
-import { IPasswordHashDomainService } from 'src/domain/services/password-hash.service';
-import { IUserDomainService } from 'src/domain/services/user.service';
 import { Application } from './application.interface';
 import { UserApplicationDto } from './dto/user.dto';
 import { IUserModel } from './persistence/models/user.model';
 import { IUserRepository } from './persistence/repositories/user.repository';
-import { NewUserUseCase } from './use-cases/new-user.use-case';
-import { SignInUseCase } from './use-cases/sign-in.use-case';
 import { IJwtApplicationService } from './service/jwt.service';
-import { VerifyTokenUseCase } from './use-cases/verify-token.use-case';
+import {
+  LogOutUseCase,
+  NewUserUseCase,
+  SignInUseCase,
+  VerifyTokenUseCase,
+} from './use-cases';
+import {
+  IPasswordHashDomainService,
+  IUserDomainService,
+} from '@/domain/services';
 
 export class ApplicationController extends Application {
   constructor(
@@ -67,5 +72,11 @@ export class ApplicationController extends Application {
       email: data.user.email,
       token: data.token,
     };
+  }
+
+  async logOut(token: string): Promise<boolean> {
+    const useCase = new LogOutUseCase(this.userRepository);
+
+    return await useCase.execute({ token });
   }
 }
