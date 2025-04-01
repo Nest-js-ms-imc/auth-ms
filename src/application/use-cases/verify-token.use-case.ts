@@ -6,10 +6,13 @@ import { IJwtApplicationService } from '../service/jwt.service';
 export class VerifyTokenUseCase {
   constructor(private readonly jwtService: IJwtApplicationService) {}
 
-  async execute(tokenApplicationDto: TokenApplicationDto): Promise<{
-    user: Omit<UserApplicationDto, 'password'>;
-    token: string;
-  }> {
+  async execute(tokenApplicationDto: TokenApplicationDto): Promise<
+    | {
+        user: Omit<UserApplicationDto, 'password'>;
+        token: string;
+      }
+    | undefined
+  > {
     const tokenData = await this.validateToken(tokenApplicationDto.token);
 
     if (tokenData) {
@@ -18,8 +21,6 @@ export class VerifyTokenUseCase {
         token: this.generateToken(tokenData.user),
       };
     }
-
-    throw new UseCaseException('Invalid token', new Map<string, boolean>());
   }
 
   private validateToken(token: string): Promise<{

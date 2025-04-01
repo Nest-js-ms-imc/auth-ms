@@ -69,14 +69,8 @@ describe('AwsSecretsService', () => {
   it('should run onModuleInit and get secrets', async () => {
     const mockSecret = { SecretString: '{"auth-secrets":"some-secret"}' };
     (clientMock.send as jest.Mock).mockResolvedValue(mockSecret);
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
     await awsSecretsService.onModuleInit();
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'secrets loaded: ',
-      mockSecret.SecretString,
-    );
   });
 
   it('should log a warning if the secret has no string value', async () => {

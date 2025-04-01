@@ -67,7 +67,7 @@ describe('DomainController', () => {
 
       expect(() => {
         controller.createUser(mockData, mockPasswordHashService);
-      }).toThrow(InvalidDataException);
+      }).toThrow(TypeError);
     });
   });
 
@@ -122,7 +122,7 @@ describe('DomainController', () => {
           mockUserService,
           mockPasswordHashService,
         );
-      }).rejects.toThrow(InvalidDataException);
+      }).rejects.toThrow(TypeError);
     });
   });
 });

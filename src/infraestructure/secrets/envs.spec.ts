@@ -22,7 +22,7 @@ describe('Environment Variables Validation', () => {
     process.env = originalEnv;
   });
 
-  it('debería lanzar un error si falta una variable de entorno', () => {
+  it('should throw an error if an environment variable is missing', () => {
     delete process.env.PORT;
 
     const schema = joi

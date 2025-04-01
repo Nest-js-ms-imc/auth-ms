@@ -2,10 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthController } from './auth.controller';
 import { Application } from '../../application/application.interface';
-import { PasswordHashService } from '../services/password-hash.service';
-import { JwtService } from '../services/jwt.service';
-import { UserService } from '../services/user.service';
-import { RegisterUserDto, LoginUserDto } from '../../domain/dto';
+import { JwtService, PasswordHashService, UserService } from '../services';
+import {
+  RegisterUserDto,
+  LoginUserDto,
+  VerifyTokenDto,
+  LogOutUserDto,
+} from '../../domain/dto';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -18,6 +21,8 @@ describe('AuthController', () => {
     applicationMock = {
       newUser: jest.fn().mockResolvedValue({ success: true }),
       login: jest.fn().mockResolvedValue({ token: 'mocked_token' }),
+      logout: jest.fn(),
+      verifyToken: jest.fn().mockResolvedValue(true),
     } as any;
 
     jwtServiceMock = {} as any;
@@ -106,5 +111,44 @@ describe('AuthController', () => {
     expect(consoleErrorSpy).toHaveBeenCalledWith(error, registerDto);
 
     consoleErrorSpy.mockRestore();
+  });
+
+  it('should verify a token', async () => {
+    const dto: VerifyTokenDto = { token: 'jwt-token' };
+    const result = { id: '123', name: 'John Doe', email: 'user@example.com' }; // Adjusted to match the expected type
+    jest.spyOn(applicationMock, 'verifyToken').mockResolvedValue(result);
+
+    expect(await authController.verifyToken(dto)).toEqual(result);
+    expect(applicationMock.verifyToken).toHaveBeenCalledWith(
+      dto.token,
+      jwtServiceMock,
+    );
+  });
+
+  it('should handle errors in verifyToken and log them', async () => {
+    const verifyTokenDto: VerifyTokenDto = {
+      token: '',
+    };
+
+    const error = new Error('VerifyToken failed');
+    applicationMock.verifyToken.mockRejectedValue(error);
+
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    await authController.verifyToken(verifyTokenDto);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(error);
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should logout a user with error', async () => {
+    const dto: LogOutUserDto = { token: 'jwt-token' };
+
+    const result = await authController.logout(dto);
+
+    expect(await authController.logout(dto)).toEqual(undefined);
   });
 });

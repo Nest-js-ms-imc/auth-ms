@@ -6,12 +6,13 @@ import { Repository } from 'typeorm';
 import { UserRepository } from './user.repository';
 import { UserModel } from '../models/user.model';
 import { UserApplicationDto } from 'src/application/dto';
-import { PasswordHashService } from '../../services/password-hash.service';
+import { PasswordHashService, RedisService } from '@/infraestructure/services';
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
   let repositoryMock: jest.Mocked<Repository<UserModel>>;
   let passwordHashServiceMock: jest.Mocked<PasswordHashService>;
+  let redisServiceMock: RedisService;
 
   beforeEach(async () => {
     repositoryMock = {
@@ -28,10 +29,15 @@ describe('UserRepository', () => {
         UserRepository,
         { provide: getRepositoryToken(UserModel), useValue: repositoryMock },
         { provide: PasswordHashService, useValue: passwordHashServiceMock },
+        {
+          provide: RedisService,
+          useValue: { set: jest.fn().mockResolvedValue(undefined) },
+        },
       ],
     }).compile();
 
     userRepository = module.get<UserRepository>(UserRepository);
+    redisServiceMock = module.get<RedisService>(RedisService);
   });
 
   it('should be defined', () => {
@@ -158,6 +164,18 @@ describe('UserRepository', () => {
         userRepository.deleteUser('notfound@example.com'),
       ).rejects.toThrow(
         new RpcException({ status: 400, message: 'User not found' }),
+      );
+    });
+  });
+
+  describe('logout', () => {
+    it('should add token to blacklist', async () => {
+      await redisServiceMock.set('blacklist:some-token', 'revoked', 3600);
+      await expect(userRepository.logout('some-token')).resolves.toBe(true);
+      expect(redisServiceMock.set).toHaveBeenCalledWith(
+        'blacklist:some-token',
+        'revoked',
+        3600,
       );
     });
   });

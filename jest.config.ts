@@ -20,6 +20,7 @@ const config: Config = {
     '/dist/',
     '\\.d\\.ts$',
     '\\.module\\.ts$',
+    '.index.ts',
   ],
 };
 

@@ -63,6 +63,6 @@ import {
         new UserService(userRepository),
     },
   ],
-  exports: [UserService],
+  exports: [UserService, JwtService],
 })
 export class InfraestructureModule {}

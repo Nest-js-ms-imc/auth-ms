@@ -24,12 +24,12 @@ describe('UserService', () => {
     userRepository = module.get<UserRepository>(UserRepository);
   });
 
-  it('debería estar definido', () => {
+  it('should be defined', () => {
     expect(userService).toBeDefined();
     expect(userRepository).toBeDefined();
   });
 
-  it('debería validar un usuario y devolver su token', async () => {
+  it('should validate a user and return its token', async () => {
     const mockUser: Omit<UserModel, 'password'> = {
       id: '123',
       email: 'test@example.com',
@@ -58,7 +58,7 @@ describe('UserService', () => {
     expect(result).toEqual({ user: mockUser, token: mockToken });
   });
 
-  it('debería lanzar un error si el login falla', async () => {
+  it('should throw an error if login fails', async () => {
     jest
       .spyOn(userRepository, 'loginUser')
       .mockRejectedValue(new Error('Credenciales inválidas'));

@@ -67,10 +67,10 @@ export class ApplicationController extends Application {
     const useCase = new VerifyTokenUseCase(jwtService);
     const data = await useCase.execute({ token });
     return {
-      id: data.user.id,
-      name: data.user.name,
-      email: data.user.email,
-      token: data.token,
+      id: data?.user.id ?? '',
+      name: data?.user.name ?? '',
+      email: data?.user.email ?? '',
+      token: data?.token ?? '',
     };
   }
 

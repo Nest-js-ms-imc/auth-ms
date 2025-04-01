@@ -73,8 +73,7 @@ export class AuthController {
   @Post('logout')
   async logout(@Body() logOutUserDto: LogOutUserDto) {
     try {
-      await this.application.logOut(logOutUserDto.token);
-      return { message: 'Logged out successfully' };
+      return await this.application.logOut(logOutUserDto.token);
     } catch (error) {
       console.error(error);
     }

@@ -1,15 +1,23 @@
-import { IPasswordHashDomainService } from '@/domain/services/password-hash.service';
-import { IUserDomainService } from '@/domain/services/user.service';
 import { ApplicationController } from './application.controller';
 import { IUserModel } from './persistence/models/user.model';
 import { IUserRepository } from './persistence/repositories/user.repository';
 import { IJwtApplicationService } from './service/jwt.service';
-import { NewUserUseCase } from './use-cases/new-user.use-case';
-import { SignInUseCase } from './use-cases/sign-in.use-case';
 import { Domain } from '../domain/domain.interface';
+import {
+  LogOutUseCase,
+  NewUserUseCase,
+  SignInUseCase,
+  VerifyTokenUseCase,
+} from './use-cases';
+import {
+  IPasswordHashDomainService,
+  IUserDomainService,
+} from '@/domain/services';
 
 jest.mock('./use-cases/new-user.use-case');
 jest.mock('./use-cases/sign-in.use-case');
+jest.mock('./use-cases/verify-token.use-case');
+jest.mock('./use-cases/logout.use-case');
 
 describe('ApplicationController', () => {
   let controller: ApplicationController;
@@ -130,6 +138,83 @@ describe('ApplicationController', () => {
           mockPasswordHashService,
         ),
       ).rejects.toThrow('Invalid credentials');
+    });
+  });
+
+  describe('verifyToken', () => {
+    it('should return a verify token', async () => {
+      const mockId = '01';
+      const mockEmail = 'test@example.com';
+      const mockName = 'Test user';
+      const mockToken = 'mocked-jwt-token';
+
+      (VerifyTokenUseCase.prototype.execute as jest.Mock).mockResolvedValue({
+        user: {
+          id: mockId,
+          email: mockEmail,
+          name: mockName,
+        },
+        token: mockToken,
+      });
+
+      const result = await controller.verifyToken(mockToken, mockJwtService);
+
+      expect(VerifyTokenUseCase).toHaveBeenCalledWith(mockJwtService);
+      expect(result).toStrictEqual({
+        email: mockEmail,
+        id: mockId,
+        name: mockName,
+        token: 'mocked-jwt-token',
+      });
+    });
+
+    it('should return a verify token without data', async () => {
+      const mockId = undefined;
+      const mockEmail = undefined;
+      const mockName = undefined;
+      const mockToken = 'mocked-jwt-token';
+
+      (VerifyTokenUseCase.prototype.execute as jest.Mock).mockResolvedValue({
+        user: {
+          id: mockId,
+          email: mockEmail,
+          name: mockName,
+        },
+        token: undefined,
+      });
+
+      const result = await controller.verifyToken(mockToken, mockJwtService);
+
+      expect(VerifyTokenUseCase).toHaveBeenCalledWith(mockJwtService);
+    });
+
+    it('should throw an error if VerifyTokenUseCase fails', async () => {
+      (VerifyTokenUseCase.prototype.execute as jest.Mock).mockRejectedValue(
+        new Error('Invalid credentials'),
+      );
+
+      await expect(
+        controller.login(
+          'test@example.com',
+          '123456',
+          mockJwtService,
+          mockUserService,
+          mockPasswordHashService,
+        ),
+      ).rejects.toThrow('Invalid credentials');
+    });
+  });
+
+  describe('logout', () => {
+    it('should sign out correctly', async () => {
+      const mockToken = 'mocked-jwt-token';
+
+      (LogOutUseCase.prototype.execute as jest.Mock).mockResolvedValue(true);
+
+      const result = await controller.logOut(mockToken);
+
+      // expect(LogOutUseCase).toHaveBeenCalledWith(mockJwtService);
+      expect(result).toStrictEqual(true);
     });
   });
 });

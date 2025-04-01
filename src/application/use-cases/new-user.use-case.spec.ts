@@ -20,6 +20,7 @@ describe('NewUserUseCase', () => {
       loginUser: jest.fn(),
       findByEmail: jest.fn(),
       deleteUser: jest.fn(),
+      logout: jest.fn(),
     } as jest.Mocked<IUserRepository<IUserModel>>;
 
     mockDomainController = {

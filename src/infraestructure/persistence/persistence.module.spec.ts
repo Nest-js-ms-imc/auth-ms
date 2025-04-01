@@ -4,9 +4,8 @@ import { DataSource, Repository } from 'typeorm';
 
 import { UserModel } from './models/user.model';
 import { UserRepository } from './repositories/user.repository';
-import { PasswordHashService } from '../services/password-hash.service';
-import { EnvsService } from '../secrets/envs.service';
-import { SecretsModule } from '../secrets/aws-secrets.module';
+import { PasswordHashService, RedisService } from '../services';
+import { EnvsService, SecretsModule } from '../secrets';
 
 describe('PersistenceModule', () => {
   let module: TestingModule;
@@ -50,6 +49,7 @@ describe('PersistenceModule', () => {
       providers: [
         UserRepository,
         PasswordHashService,
+        RedisService,
         { provide: EnvsService, useValue: envsServiceMock },
         {
           provide: getRepositoryToken(UserModel),
