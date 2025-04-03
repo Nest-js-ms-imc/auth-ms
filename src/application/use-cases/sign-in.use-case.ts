@@ -10,6 +10,7 @@ import {
   UserApplicationDto,
 } from '../dto';
 import { IJwtApplicationService } from '../service/jwt.service';
+import { RedisService } from '@/infraestructure/services';
 
 export class SignInUseCase {
   constructor(
@@ -18,6 +19,7 @@ export class SignInUseCase {
     private readonly jwtService: IJwtApplicationService,
     private readonly userService: IUserDomainService,
     private readonly passwordHashService: IPasswordHashDomainService,
+    private readonly redisService: RedisService,
   ) {}
 
   async execute(signInDto: SignInApplicationDto): Promise<TokenApplicationDto> {
@@ -39,6 +41,14 @@ export class SignInUseCase {
       }
       const { email, id, name } = this.mapUserModelToUserDto(data);
       token.token = this.generateToken({ email, id, name });
+
+      const expirationTime = 3600;
+      await this.redisService.set(
+        `authenticated:${token.token}`,
+        'allowed',
+        expirationTime,
+      );
+
       return token;
     }
 

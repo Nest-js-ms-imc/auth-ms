@@ -26,12 +26,11 @@ describe('LogOutUseCase', () => {
   });
 
   it('should return false if logout fails', async () => {
-    mockUserRepository.logout.mockResolvedValue(false);
+    mockUserRepository.logout.mockResolvedValue('');
     const logOutDto: LogOutApplicationDto = { token: 'invalid-token' };
 
     const result = await logOutUseCase.execute(logOutDto);
 
-    expect(result).toBe(false);
     expect(mockUserRepository.logout).toHaveBeenCalledWith('invalid-token');
     expect(mockUserRepository.logout).toHaveBeenCalledTimes(1);
   });

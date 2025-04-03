@@ -24,6 +24,13 @@ describe('UserRepository', () => {
       compare: jest.fn(),
     } as unknown as jest.Mocked<PasswordHashService>;
 
+    redisServiceMock = {
+      del: jest.fn().mockResolvedValue(undefined),
+      set: jest.fn(),
+      get: jest.fn(),
+      client: jest.fn().mockReturnValue({}),
+    } as unknown as jest.Mocked<RedisService>;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserRepository,
@@ -31,13 +38,12 @@ describe('UserRepository', () => {
         { provide: PasswordHashService, useValue: passwordHashServiceMock },
         {
           provide: RedisService,
-          useValue: { set: jest.fn().mockResolvedValue(undefined) },
+          useValue: redisServiceMock,
         },
       ],
     }).compile();
 
     userRepository = module.get<UserRepository>(UserRepository);
-    redisServiceMock = module.get<RedisService>(RedisService);
   });
 
   it('should be defined', () => {
@@ -169,13 +175,11 @@ describe('UserRepository', () => {
   });
 
   describe('logout', () => {
-    it('should add token to blacklist', async () => {
-      await redisServiceMock.set('blacklist:some-token', 'revoked', 3600);
-      await expect(userRepository.logout('some-token')).resolves.toBe(true);
-      expect(redisServiceMock.set).toHaveBeenCalledWith(
-        'blacklist:some-token',
-        'revoked',
-        3600,
+    it('should logout user', async () => {
+      await redisServiceMock.del('authenticated:some-token');
+
+      await expect(userRepository.logout('some-token')).resolves.toBe(
+        'Successful logout',
       );
     });
   });

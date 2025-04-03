@@ -71,6 +71,8 @@ describe('JwtService', () => {
       password: 'hashed-password',
     };
 
+    redisMock.get.mockResolvedValue('allowed');
+
     jest.spyOn(jwtTokenService, 'verify').mockReturnValue(payload);
 
     const verified = await jwtService.verifyToken('valid-token');

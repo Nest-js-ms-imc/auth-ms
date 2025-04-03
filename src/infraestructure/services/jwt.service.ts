@@ -24,9 +24,11 @@ export class JwtService implements IJwtApplicationService {
     token: string;
   }> {
     try {
-      const isBlackListed = await this.redisService.get(`blacklist:${token}`);
+      const isAuthenticated = await this.redisService.get(
+        `authenticated:${token}`,
+      );
 
-      if (isBlackListed) {
+      if (!isAuthenticated) {
         throw new RpcException({
           status: 401,
           message: 'Invalid token',

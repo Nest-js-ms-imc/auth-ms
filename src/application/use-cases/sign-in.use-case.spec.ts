@@ -9,6 +9,7 @@ import { IJwtApplicationService } from 'src/application/service/jwt.service';
 import { IUserModel } from 'src/application/persistence/models/user.model';
 import { SignInApplicationDto } from 'src/application/dto';
 import { UseCaseException } from '../exceptions/use-case.exception';
+import { RedisService } from '@/infraestructure/services';
 
 describe('SignInUseCase', () => {
   let signInUseCase: SignInUseCase;
@@ -17,6 +18,7 @@ describe('SignInUseCase', () => {
   let mockJwtService: jest.Mocked<IJwtApplicationService>;
   let mockUserService: jest.Mocked<IUserDomainService>;
   let mockPasswordHashService: jest.Mocked<IPasswordHashDomainService>;
+  let mockRedisService: jest.Mocked<RedisService>;
 
   beforeEach(() => {
     mockUserRepository = {
@@ -48,12 +50,20 @@ describe('SignInUseCase', () => {
       compare: jest.fn((password, hash) => password === hash),
     } as jest.Mocked<IPasswordHashDomainService>;
 
+    mockRedisService = {
+      del: jest.fn(),
+      set: jest.fn(),
+      get: jest.fn(),
+      client: jest.fn(),
+    } as unknown as jest.Mocked<RedisService>;
+
     signInUseCase = new SignInUseCase(
       mockUserRepository,
       mockDomainController,
       mockJwtService,
       mockUserService,
       mockPasswordHashService,
+      mockRedisService,
     );
   });
 

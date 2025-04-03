@@ -2,7 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthController } from './auth.controller';
 import { Application } from '../../application/application.interface';
-import { JwtService, PasswordHashService, UserService } from '../services';
+import {
+  JwtService,
+  PasswordHashService,
+  RedisService,
+  UserService,
+} from '../services';
 import {
   RegisterUserDto,
   LoginUserDto,
@@ -16,6 +21,7 @@ describe('AuthController', () => {
   let jwtServiceMock: jest.Mocked<JwtService>;
   let userServiceMock: jest.Mocked<UserService>;
   let passwordHashServiceMock: jest.Mocked<PasswordHashService>;
+  let redisServiceMock: jest.Mocked<RedisService>;
 
   beforeEach(async () => {
     applicationMock = {
@@ -28,6 +34,7 @@ describe('AuthController', () => {
     jwtServiceMock = {} as any;
     userServiceMock = {} as any;
     passwordHashServiceMock = {} as any;
+    redisServiceMock = {} as any;
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -36,6 +43,7 @@ describe('AuthController', () => {
         { provide: JwtService, useValue: jwtServiceMock },
         { provide: UserService, useValue: userServiceMock },
         { provide: PasswordHashService, useValue: passwordHashServiceMock },
+        { provide: RedisService, useValue: redisServiceMock },
       ],
     }).compile();
 
@@ -72,6 +80,7 @@ describe('AuthController', () => {
       jwtServiceMock,
       userServiceMock,
       passwordHashServiceMock,
+      redisServiceMock,
     );
     expect(result).toEqual({ token: 'mocked_token' });
   });

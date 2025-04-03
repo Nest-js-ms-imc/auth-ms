@@ -10,6 +10,7 @@ import {
   VerifyTokenDto,
   LogOutUserDto,
 } from '../../domain/dto';
+import { RedisService } from '../services';
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +19,7 @@ export class AuthController {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     private readonly passwordHashService: PasswordHashService,
+    private readonly redisService: RedisService,
   ) {}
 
   // @MessagePattern('auth.register.user')
@@ -48,6 +50,7 @@ export class AuthController {
         this.jwtService,
         this.userService,
         this.passwordHashService,
+        this.redisService,
       );
       return data;
     } catch (error) {

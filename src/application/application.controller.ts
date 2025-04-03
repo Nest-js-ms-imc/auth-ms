@@ -14,6 +14,7 @@ import {
   IPasswordHashDomainService,
   IUserDomainService,
 } from '@/domain/services';
+import { RedisService } from '@/infraestructure/services';
 
 export class ApplicationController extends Application {
   constructor(
@@ -43,6 +44,7 @@ export class ApplicationController extends Application {
     jwtService: IJwtApplicationService,
     userService: IUserDomainService,
     passwordHashService: IPasswordHashDomainService,
+    redisService: RedisService,
   ): Promise<string> {
     const useCase = new SignInUseCase(
       this.userRepository,
@@ -50,6 +52,7 @@ export class ApplicationController extends Application {
       jwtService,
       userService,
       passwordHashService,
+      redisService,
     );
     const data = await useCase.execute({ email, password });
     return data.token;
@@ -74,7 +77,7 @@ export class ApplicationController extends Application {
     };
   }
 
-  async logOut(token: string): Promise<boolean> {
+  async logOut(token: string): Promise<string> {
     const useCase = new LogOutUseCase(this.userRepository);
 
     return await useCase.execute({ token });

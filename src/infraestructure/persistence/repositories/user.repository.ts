@@ -112,13 +112,8 @@ export class UserRepository implements IUserRepository<UserModel> {
     return user;
   }
 
-  async logout(token: string): Promise<boolean> {
-    const expirationTime = 3600;
-    await this.redisService.set(
-      `blacklist:${token}`,
-      'revoked',
-      expirationTime,
-    );
-    return true;
+  async logout(token: string): Promise<string> {
+    await this.redisService.del(`authenticated:${token}`);
+    return 'Successful logout';
   }
 }

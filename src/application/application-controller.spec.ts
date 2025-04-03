@@ -12,7 +12,8 @@ import {
 import {
   IPasswordHashDomainService,
   IUserDomainService,
-} from '@/domain/services';
+} from '../domain/services';
+import { RedisService } from '@/infraestructure/services';
 
 jest.mock('./use-cases/new-user.use-case');
 jest.mock('./use-cases/sign-in.use-case');
@@ -26,6 +27,7 @@ describe('ApplicationController', () => {
   let mockPasswordHashService: jest.Mocked<IPasswordHashDomainService>;
   let mockJwtService: jest.Mocked<IJwtApplicationService>;
   let mockUserService: jest.Mocked<IUserDomainService>;
+  let mockRedisService: jest.Mocked<RedisService>;
 
   beforeEach(() => {
     mockUserRepository = {
@@ -45,6 +47,12 @@ describe('ApplicationController', () => {
       verifyToken: jest.fn(),
     } as jest.Mocked<IJwtApplicationService>;
     mockUserService = {} as jest.Mocked<IUserDomainService>;
+    mockRedisService = {
+      del: jest.fn(),
+      get: jest.fn(),
+      set: jest.fn(),
+      client: jest.fn() as unknown,
+    } as unknown as jest.Mocked<RedisService>;
 
     controller = new ApplicationController(
       mockUserRepository,
@@ -112,6 +120,7 @@ describe('ApplicationController', () => {
         mockJwtService,
         mockUserService,
         mockPasswordHashService,
+        mockRedisService,
       );
 
       expect(SignInUseCase).toHaveBeenCalledWith(
@@ -120,6 +129,7 @@ describe('ApplicationController', () => {
         mockJwtService,
         mockUserService,
         mockPasswordHashService,
+        mockRedisService,
       );
       expect(result).toBe(mockToken);
     });
@@ -136,6 +146,7 @@ describe('ApplicationController', () => {
           mockJwtService,
           mockUserService,
           mockPasswordHashService,
+          mockRedisService,
         ),
       ).rejects.toThrow('Invalid credentials');
     });
@@ -200,6 +211,7 @@ describe('ApplicationController', () => {
           mockJwtService,
           mockUserService,
           mockPasswordHashService,
+          mockRedisService,
         ),
       ).rejects.toThrow('Invalid credentials');
     });
