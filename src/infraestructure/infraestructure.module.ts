@@ -15,10 +15,12 @@ import {
   RedisService,
   UserService,
 } from './services';
+import { NatsModule } from './transports/nats.module';
 
 @Module({
   imports: [
     SecretsModule,
+    NatsModule,
     PersistenceModule,
     JwtModule.registerAsync({
       imports: [SecretsModule],

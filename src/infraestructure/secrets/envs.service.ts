@@ -12,7 +12,7 @@ export class EnvsService implements OnModuleInit {
   constructor(private readonly secretsService: AwsSecretsService) {}
 
   async onModuleInit() {
-    // console.log(
+    // this.logger.log(
     //   '✅ EnvsService inicializado. secretsService:',
     //   this.secretsService,
     // );
@@ -24,17 +24,17 @@ export class EnvsService implements OnModuleInit {
   }
 
   async loadSecrets(): Promise<void> {
-    const secretString = await this.secretsService.getSecret('auth-secrets');
+    const rawString = await this.secretsService.getSecret('auth-secrets');
 
-    // console.log('🔹 Secretos cargados en EnvsService:', secretString);
+    // this.logger.log('🔹 Secretos cargados en EnvsService:', rawString);
 
-    if (!secretString) {
-      throw new Error('No se pudieron obtener los secretos de AWS');
+    if (!rawString) {
+      throw new Error('Secrets are empty or undefined');
     }
 
-    const secretsString = secretString.replace(/^'{|}'$/g, '');
+    const cleanedString = rawString.replace(/^'{|}'$/g, '');
 
-    const secretJson = secretsString.replace(
+    const fixedJson = cleanedString.replace(
       /(\w+):([^,{}]+)/g,
       (match, key, value) => {
         if (!isNaN(Number(value))) {
@@ -44,7 +44,9 @@ export class EnvsService implements OnModuleInit {
       },
     );
 
-    const parsedSecrets = JSON.parse(`{${secretJson}}`);
+    // this.logger.log({ fixedJson });
+
+    const parsedObject: Record<string, string> = JSON.parse(`{${fixedJson}}`);
 
     const envsSchema = joi
       .object({
@@ -55,10 +57,11 @@ export class EnvsService implements OnModuleInit {
         DB_USERNAME: joi.string().required(),
         DB_PASSWORD: joi.string().required(),
         DB_PORT: joi.number().required(),
+        NATS_SERVERS: joi.string().required(),
       })
       .unknown(true);
 
-    const { error, value } = envsSchema.validate(parsedSecrets, {
+    const { error, value } = envsSchema.validate(parsedObject, {
       abortEarly: false,
     });
 
@@ -68,11 +71,11 @@ export class EnvsService implements OnModuleInit {
 
     this.envConfig = value;
 
-    // console.log('EnvsService values: ', { value });
+    // this.logger.log('EnvsService values: ', { value });
   }
 
   get(key: string): string {
-    // console.log(`🔹 Buscando variable ${key}:`, key, this.envConfig);
+    // this.logger.log(`🔹 Buscando variable ${key}:`, key, this.envConfig);
 
     return this.envConfig[key];
   }

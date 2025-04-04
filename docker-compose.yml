@@ -32,3 +32,13 @@ services:
       - '6379:6379'
     volumes:
       - ./redis:/usr/local/etc/redis/redis.conf
+
+  nats:
+    image: nats:latest
+    container_name: nats_server
+    ports:
+      - 8222:8222
+      - 4222:4222
+    environment:
+      - NATS_USER=nats_user
+      - NATS_PASSWORD=nats_pass

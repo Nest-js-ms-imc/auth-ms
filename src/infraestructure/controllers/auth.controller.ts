@@ -11,6 +11,7 @@ import {
   LogOutUserDto,
 } from '../../domain/dto';
 import { RedisService } from '../services';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('auth')
 export class AuthController {
@@ -22,63 +23,49 @@ export class AuthController {
     private readonly redisService: RedisService,
   ) {}
 
-  // @MessagePattern('auth.register.user')
-  // registerUser(@Payload() registerUserDto: LoginUserDto) {
-  @Post('register')
-  async registerUser(@Body() registerUserDto: RegisterUserDto) {
-    try {
-      const data = await this.application.newUser(
-        registerUserDto.name,
-        registerUserDto.email,
-        registerUserDto.password,
-        this.passwordHashService,
-      );
-      return data;
-    } catch (error) {
-      console.error(error, registerUserDto);
-    }
+  @MessagePattern('auth.register.user')
+  async registerUser(@Payload() registerUserDto: RegisterUserDto) {
+    // @Post('register')
+    // async registerUser(@Body() registerUserDto: RegisterUserDto) {
+    const data = await this.application.newUser(
+      registerUserDto.name,
+      registerUserDto.email,
+      registerUserDto.password,
+      this.passwordHashService,
+    );
+    return data;
   }
 
-  // @MessagePattern('auth.login.user')
-  // loginUser(@Payload() loginUserDto: LoginUserDto) {
-  @Post('login')
-  async loginUser(@Body() loginUserDto: LoginUserDto) {
-    try {
-      const data = await this.application.login(
-        loginUserDto.email,
-        loginUserDto.password,
-        this.jwtService,
-        this.userService,
-        this.passwordHashService,
-        this.redisService,
-      );
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
+  @MessagePattern('auth.login.user')
+  async loginUser(@Payload() loginUserDto: LoginUserDto) {
+    // @Post('login')
+    // async loginUser(@Body() loginUserDto: LoginUserDto) {
+    const data = await this.application.login(
+      loginUserDto.email,
+      loginUserDto.password,
+      this.jwtService,
+      this.userService,
+      this.passwordHashService,
+      this.redisService,
+    );
+    return data;
   }
 
-  // @MessagePattern('auth.verify.user')
-  // verifyToken(@Payload() token: string) {
-  @Get('verifyToken')
-  async verifyToken(@Body() verifyTokenDto: VerifyTokenDto) {
-    try {
-      const data = await this.application.verifyToken(
-        verifyTokenDto.token,
-        this.jwtService,
-      );
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
+  @MessagePattern('auth.verify.user')
+  async verifyToken(@Payload() verifyTokenDto: VerifyTokenDto) {
+    // @Get('verifyToken')
+    // async verifyToken(@Body() verifyTokenDto: VerifyTokenDto) {
+    const data = await this.application.verifyToken(
+      verifyTokenDto.token,
+      this.jwtService,
+    );
+    return data;
   }
 
-  @Post('logout')
-  async logout(@Body() logOutUserDto: LogOutUserDto) {
-    try {
-      return await this.application.logOut(logOutUserDto.token);
-    } catch (error) {
-      console.error(error);
-    }
+  @MessagePattern('auth.logout.user')
+  async logout(@Payload() logOutUserDto: LogOutUserDto) {
+    // @Post('logout')
+    // async logout(@Body() logOutUserDto: LogOutUserDto) {
+    return await this.application.logOut(logOutUserDto.token);
   }
 }

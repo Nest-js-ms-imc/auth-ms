@@ -8,16 +8,20 @@ import { EnvsService } from './infraestructure/secrets/envs.service';
 async function bootstrap() {
   const logger = new Logger('auth-ms');
 
-  const app = await NestFactory.create(InfraestructureModule);
-  // const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-  //   AppModule,
-  //   {
-  //     transport: Transport.TCP,
-  //     options: {
-  //       port: envs.port,
-  //     },
-  //   },
-  // );
+  // const app = await NestFactory.create(InfraestructureModule);
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    InfraestructureModule,
+    {
+      transport: Transport.NATS,
+      options: {
+        servers: (await NestFactory.create(InfraestructureModule))
+          .get(EnvsService)
+          .get('NATS_SERVERS')
+          .split(','),
+        // servers: ['nats://localhost:4222', 'nats://localhost:4223'],
+      },
+    },
+  );
 
   const envsService = app.get(EnvsService);
 
@@ -28,8 +32,8 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(envsService.get('PORT'));
-  // await app.listen();
+  // await app.listen(envsService.get('PORT'));
+  await app.listen();
 
   logger.log(`Auth Microservice running on port ${envsService.get('PORT')}`);
 }
