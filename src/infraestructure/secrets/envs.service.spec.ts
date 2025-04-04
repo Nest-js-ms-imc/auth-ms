@@ -29,7 +29,7 @@ describe('EnvsService', () => {
   describe('loadSecrets', () => {
     it('should call loadSecrets in onModuleInit', async () => {
       const mockSecret =
-        "'{PORT:3000,DB_USERNAME:TEST_USERNAME,DB_PASSWORD:TEST_PWD,DB_NAME:TEST_DB,JWT_SECRET:supersecret,DB_HOST:localhost,DB_PORT:54312}'";
+        "'{PORT:3000,DB_USERNAME:TEST_USERNAME,DB_PASSWORD:TEST_PWD,DB_NAME:TEST_DB,JWT_SECRET:supersecret,DB_HOST:localhost,DB_PORT:54312,NATS_SERVERS:nats}'";
 
       secretsServiceMock.getSecret.mockResolvedValue(mockSecret);
 
@@ -38,7 +38,7 @@ describe('EnvsService', () => {
 
     it('Should envConfig defined correctly', async () => {
       const mockSecret =
-        "'{PORT:3000,DB_USERNAME:TEST_USERNAME,DB_PASSWORD:TEST_PWD,DB_NAME:TEST_DB,JWT_SECRET:supersecret,DB_HOST:localhost,DB_PORT:54312}'";
+        "'{PORT:3000,DB_USERNAME:TEST_USERNAME,DB_PASSWORD:TEST_PWD,DB_NAME:TEST_DB,JWT_SECRET:supersecret,DB_HOST:localhost,DB_PORT:54312,NATS_SERVERS:nats}'";
 
       secretsServiceMock.getSecret.mockResolvedValue(mockSecret);
 
@@ -53,7 +53,7 @@ describe('EnvsService', () => {
       secretsServiceMock.getSecret.mockResolvedValue('');
 
       await expect(envsService.loadSecrets()).rejects.toThrow(
-        'No se pudieron obtener los secretos de AWS',
+        'Secrets are empty or undefined',
       );
     });
 
@@ -71,7 +71,7 @@ describe('EnvsService', () => {
   describe('get', () => {
     it('should return the correct value of an environment variable', async () => {
       const mockSecret =
-        "'{PORT:3000,DB_USERNAME: TEST_USERNAME,DB_PASSWORD:TEST_PWD,DB_NAME:TEST_DB,JWT_SECRET:supersecret,DB_HOST:TEST_DB_HOST,DB_PORT:5431}'";
+        "'{PORT:3000,DB_USERNAME: TEST_USERNAME,DB_PASSWORD:TEST_PWD,DB_NAME:TEST_DB,JWT_SECRET:supersecret,DB_HOST:TEST_DB_HOST,DB_PORT:5431,NATS_SERVERS:nats}'";
 
       secretsServiceMock.getSecret.mockResolvedValue(mockSecret);
 

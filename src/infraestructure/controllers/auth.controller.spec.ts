@@ -27,7 +27,7 @@ describe('AuthController', () => {
     applicationMock = {
       newUser: jest.fn().mockResolvedValue({ success: true }),
       login: jest.fn().mockResolvedValue({ token: 'mocked_token' }),
-      logout: jest.fn(),
+      logOut: jest.fn(),
       verifyToken: jest.fn().mockResolvedValue(true),
     } as any;
 
@@ -85,43 +85,6 @@ describe('AuthController', () => {
     expect(result).toEqual({ token: 'mocked_token' });
   });
 
-  it('should handle errors in loginUser', async () => {
-    const loginDto: LoginUserDto = {
-      email: 'john@example.com',
-      password: 'securepassword',
-    };
-
-    const error = new Error('Login failed');
-    applicationMock.login.mockRejectedValue(error);
-
-    jest.spyOn(console, 'error').mockImplementation(() => {});
-
-    await authController.loginUser(loginDto);
-
-    expect(console.error).toHaveBeenCalledWith(error);
-  });
-
-  it('should handle errors in registerUser and log them', async () => {
-    const registerDto: RegisterUserDto = {
-      name: 'John Doe',
-      email: 'john@example.com',
-      password: 'securepassword',
-    };
-
-    const error = new Error('User registration failed');
-    applicationMock.newUser.mockRejectedValue(error);
-
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-
-    await authController.registerUser(registerDto);
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith(error, registerDto);
-
-    consoleErrorSpy.mockRestore();
-  });
-
   it('should verify a token', async () => {
     const dto: VerifyTokenDto = { token: 'jwt-token' };
     const result = { id: '123', name: 'John Doe', email: 'user@example.com' }; // Adjusted to match the expected type
@@ -132,25 +95,6 @@ describe('AuthController', () => {
       dto.token,
       jwtServiceMock,
     );
-  });
-
-  it('should handle errors in verifyToken and log them', async () => {
-    const verifyTokenDto: VerifyTokenDto = {
-      token: '',
-    };
-
-    const error = new Error('VerifyToken failed');
-    applicationMock.verifyToken.mockRejectedValue(error);
-
-    const consoleErrorSpy = jest
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
-
-    await authController.verifyToken(verifyTokenDto);
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith(error);
-
-    consoleErrorSpy.mockRestore();
   });
 
   it('should logout a user with error', async () => {

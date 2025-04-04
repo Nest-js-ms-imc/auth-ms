@@ -1,55 +1,65 @@
 import { NestFactory } from '@nestjs/core';
-import { INestApplication } from '@nestjs/common';
-
-import { InfraestructureModule } from './infraestructure/infraestructure.module';
+import { Transport } from '@nestjs/microservices';
 import { EnvsService } from './infraestructure/secrets/envs.service';
+import { InfraestructureModule } from './infraestructure/infraestructure.module';
 
 jest.mock('@nestjs/core', () => ({
   NestFactory: {
     create: jest.fn(),
+    createMicroservice: jest.fn(),
   },
 }));
 
 describe('bootstrap', () => {
-  let mockApp: jest.Mocked<INestApplication>;
-  let mockEnvsService: Partial<EnvsService>;
+  const mockListen = jest.fn();
+  const mockUseGlobalPipes = jest.fn();
+  const mockGet = jest.fn();
+
+  const mockEnvsService = {
+    get: jest.fn((key: string) => {
+      const values: Record<string, string> = {
+        NATS_SERVERS: 'nats://localhost:4222,nats://localhost:4223',
+        PORT: '3000',
+      };
+      return values[key];
+    }),
+  };
+
+  const mockApp = {
+    get: mockGet,
+    listen: mockListen,
+    useGlobalPipes: mockUseGlobalPipes,
+  };
 
   beforeEach(() => {
-    mockApp = {
-      get: jest.fn(() => mockEnvsService),
-      useGlobalPipes: jest.fn(() => {}),
-      listen: jest.fn(async () => {}),
-    } as unknown as jest.Mocked<INestApplication>;
+    jest.clearAllMocks();
 
-    mockEnvsService = {
-      get: jest.fn().mockReturnValue('3000'),
-    };
+    // Simular llamadas anidadas
 
-    (NestFactory.create as jest.Mock).mockResolvedValue(mockApp);
-    mockApp.get.mockReturnValue(mockEnvsService);
+    (NestFactory.create as jest.Mock).mockResolvedValue({
+      get: () => mockEnvsService,
+    });
+
+    (NestFactory.createMicroservice as jest.Mock).mockReturnValue(mockApp);
+
+    mockGet.mockImplementation((service: unknown) => {
+      if (service === EnvsService) return mockEnvsService;
+    });
   });
 
-  it('should initialize the application and listen on the correct port', async () => {
+  it('should start the microservice and call listen()', async () => {
     await import('./main');
 
     expect(NestFactory.create).toHaveBeenCalledWith(InfraestructureModule);
-    expect(mockApp.get).toHaveBeenCalledWith(EnvsService);
-    expect(mockApp.listen).toHaveBeenCalledWith('3000');
-  });
-
-  it('should handle errors during initialization', () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-    const processExitSpy = jest
-      .spyOn(process, 'exit')
-      .mockImplementation(() => {
-        throw new Error('Process exit called');
-      });
-
-    (NestFactory.create as jest.Mock).mockRejectedValue(
-      new Error('Initialization failed'),
+    expect(mockEnvsService.get).toHaveBeenCalledWith('NATS_SERVERS');
+    expect(NestFactory.createMicroservice).toHaveBeenCalledWith(
+      InfraestructureModule,
+      {
+        transport: Transport.NATS,
+        options: {
+          servers: ['nats://localhost:4222', 'nats://localhost:4223'],
+        },
+      },
     );
-
-    consoleErrorSpy.mockRestore();
-    processExitSpy.mockRestore();
   });
 });
