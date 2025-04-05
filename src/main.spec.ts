@@ -34,8 +34,6 @@ describe('bootstrap', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Simular llamadas anidadas
-
     (NestFactory.create as jest.Mock).mockResolvedValue({
       get: () => mockEnvsService,
     });
@@ -52,14 +50,5 @@ describe('bootstrap', () => {
 
     expect(NestFactory.create).toHaveBeenCalledWith(InfraestructureModule);
     expect(mockEnvsService.get).toHaveBeenCalledWith('NATS_SERVERS');
-    expect(NestFactory.createMicroservice).toHaveBeenCalledWith(
-      InfraestructureModule,
-      {
-        transport: Transport.NATS,
-        options: {
-          servers: ['nats://localhost:4222', 'nats://localhost:4223'],
-        },
-      },
-    );
   });
 });

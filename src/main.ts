@@ -17,7 +17,7 @@ async function bootstrap() {
         servers: (await NestFactory.create(InfraestructureModule))
           .get(EnvsService)
           .get('NATS_SERVERS')
-          .split(','),
+          .split('*'),
         // servers: ['nats://localhost:4222', 'nats://localhost:4223'],
       },
     },

@@ -27,20 +27,19 @@ export class AuthController {
   async registerUser(@Payload() registerUserDto: RegisterUserDto) {
     // @Post('register')
     // async registerUser(@Body() registerUserDto: RegisterUserDto) {
-    const data = await this.application.newUser(
+    return await this.application.newUser(
       registerUserDto.name,
       registerUserDto.email,
       registerUserDto.password,
       this.passwordHashService,
     );
-    return data;
   }
 
   @MessagePattern('auth.login.user')
   async loginUser(@Payload() loginUserDto: LoginUserDto) {
     // @Post('login')
     // async loginUser(@Body() loginUserDto: LoginUserDto) {
-    const data = await this.application.login(
+    return await this.application.login(
       loginUserDto.email,
       loginUserDto.password,
       this.jwtService,
@@ -48,18 +47,16 @@ export class AuthController {
       this.passwordHashService,
       this.redisService,
     );
-    return data;
   }
 
   @MessagePattern('auth.verify.user')
   async verifyToken(@Payload() verifyTokenDto: VerifyTokenDto) {
     // @Get('verifyToken')
     // async verifyToken(@Body() verifyTokenDto: VerifyTokenDto) {
-    const data = await this.application.verifyToken(
+    return await this.application.verifyToken(
       verifyTokenDto.token,
       this.jwtService,
     );
-    return data;
   }
 
   @MessagePattern('auth.logout.user')
