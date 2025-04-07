@@ -26,21 +26,17 @@ describe('EnvsService', () => {
     expect(envsService).toBeDefined();
   });
 
+  const variables = `{"PORT";"3000","DB_USERNAME";"postgres","DB_PASSWORD";"M1S3Cr37P4s5w0rd","DB_NAME";"TEST_DB","JWT_SECRET";"supersecret","DB_HOST";"localhost","DB_PORT";"5432","NATS_SERVERS";"nats://localhost:4222**nats://localhost:4223"}`;
+
   describe('loadSecrets', () => {
     it('should call loadSecrets in onModuleInit', async () => {
-      const mockSecret =
-        "'{PORT;3000,DB_USERNAME;TEST_USERNAME,DB_PASSWORD;TEST_PWD,DB_NAME;TEST_DB,JWT_SECRET;supersecret,DB_HOST;localhost,DB_PORT;54312,NATS_SERVERS;nats}'";
-
-      secretsServiceMock.getSecret.mockResolvedValue(mockSecret);
+      secretsServiceMock.getSecret.mockResolvedValue(variables);
 
       await envsService.onModuleInit();
     });
 
     it('Should envConfig defined correctly', async () => {
-      const mockSecret =
-        "'{PORT;3000,DB_USERNAME;TEST_USERNAME,DB_PASSWORD;TEST_PWD,DB_NAME;TEST_DB,JWT_SECRET;supersecret,DB_HOST;localhost,DB_PORT;54312,NATS_SERVERS;nats}'";
-
-      secretsServiceMock.getSecret.mockResolvedValue(mockSecret);
+      secretsServiceMock.getSecret.mockResolvedValue(variables);
 
       await envsService.loadSecrets();
 
@@ -58,7 +54,7 @@ describe('EnvsService', () => {
     });
 
     it('Should throw error into config init', async () => {
-      const mockSecret = "'{PORT:isNotNumber}'";
+      const mockSecret = `{"PORT":"isNotNumber"}`;
 
       secretsServiceMock.getSecret.mockResolvedValue(mockSecret);
 
@@ -70,10 +66,7 @@ describe('EnvsService', () => {
 
   describe('get', () => {
     it('should return the correct value of an environment variable', async () => {
-      const mockSecret =
-        "'{PORT;3000,DB_USERNAME; TEST_USERNAME,DB_PASSWORD;TEST_PWD,DB_NAME;TEST_DB,JWT_SECRET;supersecret,DB_HOST;TEST_DB_HOST,DB_PORT;5431,NATS_SERVERS;nats}'";
-
-      secretsServiceMock.getSecret.mockResolvedValue(mockSecret);
+      secretsServiceMock.getSecret.mockResolvedValue(variables);
 
       await envsService.loadSecrets();
 

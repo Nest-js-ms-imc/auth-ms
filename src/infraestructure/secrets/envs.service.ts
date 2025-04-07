@@ -32,27 +32,23 @@ export class EnvsService implements OnModuleInit {
       throw new Error('Secrets are empty or undefined');
     }
 
-    const cleanedString = rawString.replace(/^'{|}'$/g, '');
+    // const cleanedString = rawString.replace(/^'{|}'$/g, '');
+    const cleanedString = rawString.replace(/;/g, ':');
 
-    // this.logger.log(`🔹 EnvsService cleanedString:`, { cleanedString });
+    // this.logger.log(`🔹 EnvsService cleanedString:`, cleanedString);
 
-    const fixedJson = Object.fromEntries(
-      cleanedString.split(',').map((pair) => {
-        const [key, value] = pair.split(';');
-        return [key, value];
-      }),
-    );
-
-    // console.log(JSON.stringify(fixedJson, null, 2));
-
-    // this.logger.log(
-    //   `🔹 EnvsService fixedJson:`,
-    //   { cleanedString },
-    //   { fixedJson },
+    // const fixedJson = Object.fromEntries(
+    //   cleanedString.split(',').map((pair) => {
+    //     const [key, value] = pair.split(';');
+    //     return [key, value];
+    //   }),
     // );
 
+    // this.logger.log(`🔹 EnvsService fixedJson:`, { fixedJson });
+
     // const parsedObject = JSON.parse(fixedJson);
-    const parsedObject = fixedJson;
+    const parsedObject = JSON.parse(cleanedString);
+    // const parsedObject = fixedJson;
 
     // this.logger.log(`🔹 EnvsService parsedObject:`, { parsedObject });
 
