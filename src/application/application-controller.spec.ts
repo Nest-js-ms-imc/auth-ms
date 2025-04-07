@@ -165,7 +165,6 @@ describe('ApplicationController', () => {
           email: mockEmail,
           name: mockName,
         },
-        token: mockToken,
       });
 
       const result = await controller.verifyToken(mockToken, mockJwtService);
@@ -175,7 +174,6 @@ describe('ApplicationController', () => {
         email: mockEmail,
         id: mockId,
         name: mockName,
-        token: 'mocked-jwt-token',
       });
     });
 

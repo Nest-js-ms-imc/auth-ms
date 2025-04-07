@@ -35,8 +35,7 @@ describe('VerifyTokenUseCase', () => {
     const result = await verifyTokenUseCase.execute(tokenApplicationDto);
 
     expect(mockJwtService.verifyToken).toHaveBeenCalledWith(mockToken);
-    expect(mockJwtService.generateToken).toHaveBeenCalledWith(mockUser);
-    expect(result).toEqual({ user: mockUser, token: 'new-token' });
+    expect(result).toEqual({ user: mockUser });
   });
 
   it('should throw UseCaseException for an invalid token', async () => {
