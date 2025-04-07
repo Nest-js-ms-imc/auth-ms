@@ -21,7 +21,7 @@ import { EnvsService, SecretsModule } from '../secrets';
           return {
             transport: Transport.NATS,
             options: {
-              servers: envsService.get('NATS_SERVERS').split('*'),
+              servers: envsService.get('NATS_SERVERS').split('**'),
               // servers: ['nats://localhost:4222', 'nats://localhost:4223'],
             },
           };

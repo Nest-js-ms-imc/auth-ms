@@ -9,7 +9,7 @@ export class VerifyTokenUseCase {
   async execute(tokenApplicationDto: TokenApplicationDto): Promise<
     | {
         user: Omit<UserApplicationDto, 'password'>;
-        token: string;
+        // token: string;
       }
     | undefined
   > {
@@ -18,7 +18,7 @@ export class VerifyTokenUseCase {
     if (tokenData) {
       return {
         user: tokenData.user,
-        token: this.generateToken(tokenData.user),
+        // token: this.generateToken(tokenData.user),
       };
     }
   }
@@ -30,7 +30,7 @@ export class VerifyTokenUseCase {
     return this.jwtService.verifyToken(token);
   }
 
-  private generateToken(data: Omit<UserApplicationDto, 'password'>): string {
-    return this.jwtService.generateToken(data);
-  }
+  // private generateToken(data: Omit<UserApplicationDto, 'password'>): string {
+  //   return this.jwtService.generateToken(data);
+  // }
 }

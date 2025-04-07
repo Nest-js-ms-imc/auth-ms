@@ -87,7 +87,7 @@ describe('AuthController', () => {
 
   it('should verify a token', async () => {
     const dto: VerifyTokenDto = { token: 'jwt-token' };
-    const result = { id: '123', name: 'John Doe', email: 'user@example.com' }; // Adjusted to match the expected type
+    const result = { id: '123', name: 'John Doe', email: 'user@example.com' };
     jest.spyOn(applicationMock, 'verifyToken').mockResolvedValue(result);
 
     expect(await authController.verifyToken(dto)).toEqual(result);

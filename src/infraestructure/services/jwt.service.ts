@@ -28,6 +28,8 @@ export class JwtService implements IJwtApplicationService {
         `authenticated:${token}`,
       );
 
+      // console.log({ isAuthenticated, token });
+
       if (!isAuthenticated) {
         throw new RpcException({
           status: 401,

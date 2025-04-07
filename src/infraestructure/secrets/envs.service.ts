@@ -34,19 +34,27 @@ export class EnvsService implements OnModuleInit {
 
     const cleanedString = rawString.replace(/^'{|}'$/g, '');
 
-    const fixedJson = cleanedString.replace(
-      /(\w+):([^,{}]+)/g,
-      (match, key, value) => {
-        if (!isNaN(Number(value))) {
-          return `"${key}":${value}`;
-        }
-        return `"${key}":"${value}"`;
-      },
+    // this.logger.log(`🔹 EnvsService cleanedString:`, { cleanedString });
+
+    const fixedJson = Object.fromEntries(
+      cleanedString.split(',').map((pair) => {
+        const [key, value] = pair.split(';');
+        return [key, value];
+      }),
     );
 
-    // this.logger.log({ fixedJson });
+    // console.log(JSON.stringify(fixedJson, null, 2));
 
-    const parsedObject: Record<string, string> = JSON.parse(`{${fixedJson}}`);
+    // this.logger.log(
+    //   `🔹 EnvsService fixedJson:`,
+    //   { cleanedString },
+    //   { fixedJson },
+    // );
+
+    // const parsedObject = JSON.parse(fixedJson);
+    const parsedObject = fixedJson;
+
+    // this.logger.log(`🔹 EnvsService parsedObject:`, { parsedObject });
 
     const envsSchema = joi
       .object({

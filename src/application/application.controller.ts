@@ -65,7 +65,7 @@ export class ApplicationController extends Application {
     id: string;
     name: string;
     email: string;
-    token: string;
+    // token: string;
   }> {
     const useCase = new VerifyTokenUseCase(jwtService);
     const data = await useCase.execute({ token });
@@ -73,7 +73,7 @@ export class ApplicationController extends Application {
       id: data?.user.id ?? '',
       name: data?.user.name ?? '',
       email: data?.user.email ?? '',
-      token: data?.token ?? '',
+      // token: data?.token ?? '',
     };
   }
 
